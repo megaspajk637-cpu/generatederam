@@ -104,4 +104,5 @@
         generateBtn.addEventListener('click', generateIdea);
         clearBtn.addEventListener('click', clearOutput);
         
+
         console.log('✅ AI Генератор готов. Используется OpenRouter API');
