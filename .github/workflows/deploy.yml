@@ -9,22 +9,26 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pages: write      # Добавлено для надежности
+      pages: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Replace API Key placeholder
         env:
-          MY_API_KEY: ${{ secrets.API_KEY }} # Передаем через env для безопасности
+          MY_API_KEY: ${{ secrets.API_KEY }}
         run: |
           echo "🔑 Подставляем ключ..."
-          # Используем переменную окружения в sed
-          sed -i "s|MY_API|$MY_API_KEY|g" index.js
-          echo "✅ Готово!"
+          if [ -z "$MY_API_KEY" ]; then
+            echo "⚠️ ВНИМАНИЕ: API_KEY секрет не установлен!"
+            exit 1
+          fi
+          # Заменяем пустой ключ или маркер
+          sed -i "s|const API_KEY = '';|const API_KEY = '$MY_API_KEY';|g" index.js
+          echo "✅ Ключ успешно подставлен!"
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4 # Обновлено до v4
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./
