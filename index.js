@@ -1,17 +1,4 @@
-async function generateIdea() {
-    if (isLoading) return;
 
-    // Добавьте эту проверку для отладки
-    console.log('API_KEY length:', API_KEY ? API_KEY.length : 0);
-    console.log('API_KEY starts with:', API_KEY ? API_KEY.substring(0, 10) : 'empty');
-    
-    if (!API_KEY || API_KEY === '') {
-        showError('API ключ не настроен');
-        setLoadingState(false);
-        return;
-    }
-
-    setLoadingState(true);
 // ==============================================
         // ⚡ НАСТРОЙКИ OPENROUTER
         // ==============================================
@@ -120,4 +107,5 @@ async function generateIdea() {
         
 
         console.log('✅ AI Генератор готов. Используется OpenRouter API');
+
 
