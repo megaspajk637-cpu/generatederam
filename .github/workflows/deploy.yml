@@ -1,0 +1,30 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write      # Добавлено для надежности
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Replace API Key placeholder
+        env:
+          MY_API_KEY: ${{ secrets.API_KEY }} # Передаем через env для безопасности
+        run: |
+          echo "🔑 Подставляем ключ..."
+          # Используем переменную окружения в sed
+          sed -i "s|MY_API|$MY_API_KEY|g" index.js
+          echo "✅ Готово!"
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4 # Обновлено до v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./
