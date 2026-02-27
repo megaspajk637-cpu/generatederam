@@ -5,7 +5,7 @@
         const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
         
         // Создайте бесплатный аккаунт и получите ключ: https://openrouter.ai/keys
-        const API_KEY = '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';
+        const API_KEY = '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';
         
         // Модель (бесплатная)
         const MODEL = 'arcee-ai/trinity-large-preview:free';
