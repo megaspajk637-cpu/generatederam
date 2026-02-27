@@ -1,0 +1,5 @@
+# Игнорируем файлы с ключами
+config.js
+.env
+*.local
+.DS_Store
