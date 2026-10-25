@@ -80,7 +80,7 @@ const server = http.createServer((req, res) => {
     if (req.method !== 'GET' && req.method !== 'HEAD') return sendJson(res, 405, { error: 'Метод не поддерживается.' });
 
     const pathname = new URL(req.url, `http://localhost:${PORT}`).pathname;
-    const files = { '/': 'index.html', '/index.html': 'index.html', '/index.css': 'index.css', '/index.js': 'index.js' };
+    const files = { '/': 'index.html', '/index.html': 'index.html', '/index.css': 'index.css', '/client.js': 'client.js' };
     const file = files[pathname];
     if (!file) return sendJson(res, 404, { error: 'Страница не найдена.' });
     const types = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8' };
@@ -90,4 +90,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => console.log(`Приложение запущено: http://localhost:${PORT}`));
+
 
