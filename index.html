@@ -2,42 +2,29 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>AI Генератор идей</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Генератор</title>
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <div class="card">
-        <h1>
-            🤖 AI Генератор
-            <span>OpenRouter</span>
-        </h1>
-        <div class="subtitle">
-            Ответы от нейросети через OpenRouter API
+    <main class="card">
+        <h1>🤖 AI Генератор <span>OpenRouter</span></h1>
+        <p class="subtitle">Введите запрос — нейросеть ответит на него.</p>
+
+        <label class="prompt-label" for="promptInput">Ваш запрос</label>
+        <textarea id="promptInput" class="prompt-input" rows="4" maxlength="10000" placeholder="Например: придумай три идеи для небольшого игрового проекта"></textarea>
+        <p class="hint">До 10 000 символов. Ctrl + Enter — отправить.</p>
+
+        <section id="aiOutput" class="output-field" aria-live="polite">Ответ появится здесь.</section>
+
+        <button id="generateBtn" class="generate-btn" type="button">Отправить запрос</button>
+        <button id="clearBtn" class="clear-btn" type="button">Очистить</button>
+
+        <div class="footer-row">
+            <div id="statusBadge" class="status-badge">Ожидание</div>
+            <div class="model-name">Модель: GPT-OSS-20B</div>
         </div>
-
-        <div id="aiOutput" class="output-field">✨ Нажмите кнопку «Сгенерировать идею» — нейросеть придумает уникальную концепцию
-        </div>
-
-        <button id="generateBtn" class="generate-btn">
-            <span></span> Сгенерировать идею
-        </button>
-        
-        <button id="clearBtn" class="clear-btn">
-            Очистить поле
-        </button>
-
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
-            <div id="statusBadge" class="status-badge">
-                Ожидание
-            </div>
-            <div style="font-size: 0.85rem; color: #574b0f; margin-top: 1rem;">
-                Модель: arcee-ai
-            </div>
-        </div>
-
-        
-    </div>
-
+    </main>
     <script src="index.js"></script>
 </body>
 </html>

@@ -1,113 +1,58 @@
+const promptInput = document.getElementById('promptInput');
+const outputDiv = document.getElementById('aiOutput');
+const generateBtn = document.getElementById('generateBtn');
+const clearBtn = document.getElementById('clearBtn');
+const statusBadge = document.getElementById('statusBadge');
 
-// ==============================================
-        // ⚡ НАСТРОЙКИ OPENROUTER
-        // ==============================================
-        const API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-        
-        // Создайте бесплатный аккаунт и получите ключ: https://openrouter.ai/keys
-        const API_KEY = '';
-        
-        // Модель (бесплатная)
-        const MODEL = 'arcee-ai/trinity-large-preview:free';
-        // ==============================================
+function setStatus(message, state = '') {
+    statusBadge.textContent = message;
+    statusBadge.className = `status-badge${state ? ` ${state}` : ''}`;
+}
 
-        // Элементы DOM
-        const outputDiv = document.getElementById('aiOutput');
-        const generateBtn = document.getElementById('generateBtn');
-        const clearBtn = document.getElementById('clearBtn');
-        const statusBadge = document.getElementById('statusBadge');
+async function sendPrompt() {
+    const prompt = promptInput.value.trim();
+    if (!prompt) {
+        setStatus('Введите запрос', 'error');
+        promptInput.focus();
+        return;
+    }
 
-        let isLoading = false;
+    generateBtn.disabled = true;
+    outputDiv.classList.remove('error');
+    outputDiv.classList.add('loading');
+    outputDiv.textContent = 'Нейросеть думает…';
+    setStatus('Генерирую…', 'active');
 
-        function setLoadingState(loading) {
-            isLoading = loading;
-            generateBtn.disabled = loading;
-            
-            if (loading) {
-                outputDiv.classList.add('loading');
-                outputDiv.classList.remove('error');
-                statusBadge.innerHTML = '⏳ Генерирую...';
-                statusBadge.className = 'status-badge active';
-            } else {
-                outputDiv.classList.remove('loading');
-                statusBadge.innerHTML = 'Готов к работе';
-                statusBadge.className = 'status-badge';
-            }
-        }
+    try {
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || `Ошибка сервера (${response.status})`);
+        outputDiv.textContent = data.answer || 'Модель вернула пустой ответ.';
+        setStatus('Готово');
+    } catch (error) {
+        outputDiv.textContent = error.message || 'Не удалось получить ответ. Проверьте подключение и настройки.';
+        outputDiv.classList.add('error');
+        setStatus('Ошибка', 'error');
+    } finally {
+        outputDiv.classList.remove('loading');
+        generateBtn.disabled = false;
+    }
+}
 
-        function showError(message) {
-            outputDiv.classList.add('error');
-            outputDiv.classList.remove('loading');
-            outputDiv.textContent = `❌ Ошибка: ${message}`;
-            statusBadge.innerHTML = '⚠️ Ошибка';
-            statusBadge.className = 'status-badge error';
-        }
+function clearForm() {
+    promptInput.value = '';
+    outputDiv.textContent = 'Ответ появится здесь.';
+    outputDiv.classList.remove('loading', 'error');
+    setStatus('Ожидание');
+    promptInput.focus();
+}
 
-        function clearOutput() {
-            outputDiv.classList.remove('error', 'loading');
-            outputDiv.textContent = '✨ Нажмите кнопку «Сгенерировать идею» — нейросеть придумает уникальную концепцию';
-            statusBadge.innerHTML = 'Ожидание';
-            statusBadge.className = 'status-badge';
-        }
-
-        async function generateIdea() {
-            if (isLoading) return;
-
-            setLoadingState(true);
-
-            const promptText = `Сгенерируй 3 оригинальные шутки в 2026 году
-Форматируй ответ красиво, с эмодзи.`;
-
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${API_KEY}`,
-                        'Content-Type': 'application/json',
-                        'HTTP-Referer': window.location.origin,
-                        'X-Title': 'AI Generator'
-                    },
-                    body: JSON.stringify({
-                        model: MODEL,
-                        messages: [
-                            {
-                                role: 'user',
-                                content: promptText
-                            }
-                        ],
-                        temperature: 0.8,
-                        max_tokens: 500
-                    })
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}));
-                    throw new Error(errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`);
-                }
-
-                const data = await response.json();
-                
-                // Извлекаем текст ответа
-                const aiText = data.choices?.[0]?.message?.content || 'Ответ не получен';
-                
-                outputDiv.classList.remove('error');
-                outputDiv.textContent = aiText;
-                
-
-            } catch (error) {
-                console.error('Детали ошибки:', error);
-                showError(error.message);
-            } finally {
-                setLoadingState(false);
-            }
-        }
-
-        generateBtn.addEventListener('click', generateIdea);
-        clearBtn.addEventListener('click', clearOutput);
-        
-
-        console.log('✅ AI Генератор готов. Используется OpenRouter API');
-
-
-
-
+generateBtn.addEventListener('click', sendPrompt);
+clearBtn.addEventListener('click', clearForm);
+promptInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) sendPrompt();
+});

@@ -1,5 +1,11 @@
-# Игнорируем файлы с ключами
-config.js
+# Секреты и локальные настройки
 .env
-*.local
+.env.*
+!.env.example
+config.js
+
+# Node.js
+node_modules/
+
+# Системные файлы
 .DS_Store
